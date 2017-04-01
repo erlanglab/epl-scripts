@@ -21,7 +21,7 @@ const getClientEnvironment = require('./env');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
-const publicPath = paths.servedPath;
+const publicPath = './'; //paths.servedPath;
 // Some apps do not use client-side routing with pushState.
 // For these, "homepage" can be set to "." to enable relative asset paths.
 const shouldUseRelativeAssetPaths = publicPath === './';
@@ -42,7 +42,7 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
 const packageJSON = require(paths.appPackageJson);
 
 // Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/[name].[contenthash:8].css';
+const cssFilename = '[name].[contenthash:8].css';
 
 // ExtractTextPlugin expects the build output to be flat.
 // (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
@@ -152,7 +152,7 @@ module.exports = {
         ],
         loader: 'file-loader',
         options: {
-          name: 'static/media/[name].[hash:8].[ext]'
+          name: 'media/[name].[hash:8].[ext]'
         }
       },
       // "url" loader works just like "file" loader but it also embeds
@@ -162,7 +162,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]'
+          name: 'media/[name].[hash:8].[ext]'
         }
       },
       // Process JS with Babel.
