@@ -29,7 +29,7 @@ const env = getClientEnvironment(publicUrl);
 // We're loading package.json to get project name
 const packageJSON = require(paths.appPackageJson);
 
-const publicPath = './';
+const publicPath = '/';
 const cssFilename = 'style.css';
 const extractTextPluginOptions = {
   publicPath: Array(cssFilename.split('/').length).join('../')
@@ -138,7 +138,7 @@ module.exports = {
         ],
         loader: 'file-loader',
         options: {
-          name: 'media/[name].[hash:8].[ext]'
+          name: `${packageJSON.name}/[name].[ext]`
         }
       },
       // "url" loader works like "file" loader except that it embeds assets
@@ -149,7 +149,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'media/[name].[hash:8].[ext]'
+          name: `${packageJSON.name}/[name].[ext]`
         }
       },
       // Process JS with Babel.
@@ -218,6 +218,7 @@ module.exports = {
     new ExtractTextPlugin({
       filename: cssFilename
     }),
+
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin(env.stringified),

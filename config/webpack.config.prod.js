@@ -152,7 +152,7 @@ module.exports = {
         ],
         loader: 'file-loader',
         options: {
-          name: 'media/[name].[hash:8].[ext]'
+          name: `${packageJSON.name}/[name].[hash:8].[ext]`
         }
       },
       // "url" loader works just like "file" loader but it also embeds
@@ -162,7 +162,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'media/[name].[hash:8].[ext]'
+          name: `${packageJSON.name}/[name].[hash:8].[ext]`
         }
       },
       // Process JS with Babel.
