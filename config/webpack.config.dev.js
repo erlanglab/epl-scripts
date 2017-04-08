@@ -14,6 +14,7 @@ const fs = require('fs');
 const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
@@ -28,6 +29,11 @@ const env = getClientEnvironment(publicUrl);
 // We're loading package.json to get project name
 const packageJSON = require(paths.appPackageJson);
 
+const publicPath = '/';
+const cssFilename = 'style.css';
+const extractTextPluginOptions = {
+  publicPath: Array(cssFilename.split('/').length).join('../')
+};
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -58,7 +64,7 @@ module.exports = {
     filename: 'index.js',
     library: `__EPL_${packageJSON.name}`,
     libraryTarget: 'window',
-    publicPath: '/'
+    publicPath: publicPath
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -132,7 +138,7 @@ module.exports = {
         ],
         loader: 'file-loader',
         options: {
-          name: 'static/media/[name].[hash:8].[ext]'
+          name: `${packageJSON.name}/[name].[ext]`
         }
       },
       // "url" loader works like "file" loader except that it embeds assets
@@ -143,7 +149,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]'
+          name: `${packageJSON.name}/[name].[ext]`
         }
       },
       // Process JS with Babel.
@@ -169,31 +175,39 @@ module.exports = {
       // in development "style" loader enables hot editing of CSS.
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1
-            }
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
-              plugins: () => [
-                autoprefixer({
-                  browsers: [
-                    '>1%',
-                    'last 4 versions',
-                    'Firefox ESR',
-                    'not ie < 9' // React doesn't support IE8 anyway
-                  ]
-                })
+        loader: ExtractTextPlugin.extract(
+          Object.assign(
+            {
+              fallback: 'style-loader',
+              use: [
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 1
+                  }
+                },
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                    plugins: () => [
+                      autoprefixer({
+                        browsers: [
+                          '>1%',
+                          'last 4 versions',
+                          'Firefox ESR',
+                          'not ie < 9' // React doesn't support IE8 anyway
+                        ]
+                      })
+                    ]
+                  }
+                }
               ]
-            }
-          }
-        ]
+            },
+            extractTextPluginOptions
+          )
+        )
+        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
       }
       // TODO elm-webpack-loader
       // ** STOP ** Are you adding a new loader?
@@ -201,6 +215,10 @@ module.exports = {
     ]
   },
   plugins: [
+    new ExtractTextPlugin({
+      filename: cssFilename
+    }),
+
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin(env.stringified),
